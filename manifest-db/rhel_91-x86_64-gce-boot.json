@@ -5126,52 +5126,22 @@
                     }
                   },
                   {
-                    "id": "sha256:1c2799ecc6638eab997fe5dedba7df06baf35963bae60ffd62d5e6be22f05805",
-                    "options": {
-                      "metadata": {
-                        "rpm.check_gpg": true
-                      }
-                    }
+                    "id": "sha256:1c2799ecc6638eab997fe5dedba7df06baf35963bae60ffd62d5e6be22f05805"
                   },
                   {
-                    "id": "sha256:0909e57876b1572c1e03b8eea0a0b116b8a40a5989d87e2f1d42bc03fd266d29",
-                    "options": {
-                      "metadata": {
-                        "rpm.check_gpg": true
-                      }
-                    }
+                    "id": "sha256:0909e57876b1572c1e03b8eea0a0b116b8a40a5989d87e2f1d42bc03fd266d29"
                   },
                   {
-                    "id": "sha256:e9a1e074142d8f38bf403d5bb9be55096552e94f05dcc29cf9ea4886d0020752",
-                    "options": {
-                      "metadata": {
-                        "rpm.check_gpg": true
-                      }
-                    }
+                    "id": "sha256:e9a1e074142d8f38bf403d5bb9be55096552e94f05dcc29cf9ea4886d0020752"
                   },
                   {
-                    "id": "sha256:9cde6688316b91378c8ae8716459ea9bb15c3d4fa04185f60c7570fab8ac8110",
-                    "options": {
-                      "metadata": {
-                        "rpm.check_gpg": true
-                      }
-                    }
+                    "id": "sha256:9cde6688316b91378c8ae8716459ea9bb15c3d4fa04185f60c7570fab8ac8110"
                   },
                   {
-                    "id": "sha256:b9540086358a7c32bc5181f2e93a495e37a577619472d47641d8b75cbd43041c",
-                    "options": {
-                      "metadata": {
-                        "rpm.check_gpg": true
-                      }
-                    }
+                    "id": "sha256:b9540086358a7c32bc5181f2e93a495e37a577619472d47641d8b75cbd43041c"
                   },
                   {
-                    "id": "sha256:746037ad773de34a34c80fa7da4a705428b821e3e892f8e53cfc204616ad9337",
-                    "options": {
-                      "metadata": {
-                        "rpm.check_gpg": true
-                      }
-                    }
+                    "id": "sha256:746037ad773de34a34c80fa7da4a705428b821e3e892f8e53cfc204616ad9337"
                   }
                 ]
               }

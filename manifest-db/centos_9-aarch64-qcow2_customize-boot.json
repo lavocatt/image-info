@@ -6845,6 +6845,16 @@
         "grub_arg": "--unrestricted",
         "grub_class": "centos",
         "grub_users": "$grub_users",
+        "initrd": "/initramfs-0-rescue-ffffffffffffffffffffffffffffffff.img",
+        "linux": "/vmlinuz-0-rescue-ffffffffffffffffffffffffffffffff",
+        "options": "root=UUID=6e4ff95f-f662-45ee-a82a-bdf44a2d0b75 console=tty0 console=ttyS0,115200n8 no_timer_check net.ifnames=0 debug",
+        "title": "CentOS Stream (0-rescue-ffffffffffffffffffffffffffffffff) 9",
+        "version": "0-rescue-ffffffffffffffffffffffffffffffff"
+      },
+      {
+        "grub_arg": "--unrestricted",
+        "grub_class": "centos",
+        "grub_users": "$grub_users",
         "initrd": "/initramfs-5.14.0-55.el9.aarch64.img $tuned_initrd",
         "linux": "/vmlinuz-5.14.0-55.el9.aarch64",
         "options": "root=UUID=6e4ff95f-f662-45ee-a82a-bdf44a2d0b75 console=tty0 console=ttyS0,115200n8 no_timer_check net.ifnames=0 debug $tuned_params",
@@ -7029,9 +7039,18 @@
         },
         "02-generic-image.conf": {
           "hostonly": "no"
+        },
+        "02-rescue.conf": {
+          "dracut_rescue_image": "yes"
         }
       }
     },
+    "firewall-default-zone": "public",
+    "firewall-enabled": [
+      "ssh",
+      "dhcpv6-client",
+      "cockpit"
+    ],
     "fstab": [
       [
         "UUID=0194fdc2-fa2f-4cc0-81d3-ff12045b73c8",
@@ -7224,6 +7243,7 @@
       "dosfstools-4.2-3.el9.aarch64",
       "dracut-055-10.git20210824.el9.aarch64",
       "dracut-config-generic-055-10.git20210824.el9.aarch64",
+      "dracut-config-rescue-055-10.git20210824.el9.aarch64",
       "dracut-network-055-10.git20210824.el9.aarch64",
       "dracut-squash-055-10.git20210824.el9.aarch64",
       "e2fsprogs-1.46.5-2.el9.aarch64",
@@ -7240,6 +7260,8 @@
       "file-libs-5.39-8.el9.aarch64",
       "filesystem-3.16-2.el9.aarch64",
       "findutils-4.8.0-5.el9.aarch64",
+      "firewalld-1.0.0-2.el9.noarch",
+      "firewalld-filesystem-1.0.0-2.el9.noarch",
       "flashrom-1.2-10.el9.aarch64",
       "fonts-filesystem-2.0.5-7.el9.1.noarch",
       "fuse-libs-2.9.9-15.el9.aarch64",
@@ -7285,7 +7307,10 @@
       "ipcalc-1.0.0-5.el9.aarch64",
       "iproute-5.13.0-5.el9.aarch64",
       "iproute-tc-5.13.0-5.el9.aarch64",
+      "ipset-7.11-6.el9.aarch64",
+      "ipset-libs-7.11-6.el9.aarch64",
       "iptables-libs-1.8.7-26.el9.aarch64",
+      "iptables-nft-1.8.7-26.el9.aarch64",
       "iputils-20210202-7.el9.aarch64",
       "irqbalance-1.8.0-4.el9.aarch64",
       "jansson-2.14-1.el9.aarch64",
@@ -7360,6 +7385,7 @@
       "libnetfilter_conntrack-1.0.8-4.el9.aarch64",
       "libnfnetlink-1.0.1-21.el9.aarch64",
       "libnfsidmap-2.5.4-9.el9.aarch64",
+      "libnftnl-1.1.9-4.el9.aarch64",
       "libnghttp2-1.43.0-5.el9.aarch64",
       "libnl3-3.5.0-10.el9.aarch64",
       "libnl3-cli-3.5.0-10.el9.aarch64",
@@ -7430,6 +7456,7 @@
       "nettle-3.7.3-2.el9.aarch64",
       "newt-0.52.21-11.el9.aarch64",
       "nfs-utils-2.5.4-9.el9.aarch64",
+      "nftables-0.9.8-10.el9.aarch64",
       "npth-1.6-8.el9.aarch64",
       "numactl-libs-2.0.14-7.el9.aarch64",
       "oddjob-0.34.7-4.el9.aarch64",
@@ -7475,6 +7502,7 @@
       "python3-distro-1.5.0-7.el9.noarch",
       "python3-dnf-4.10.0-3.el9.noarch",
       "python3-dnf-plugins-core-4.0.24-2.el9.noarch",
+      "python3-firewall-1.0.0-2.el9.noarch",
       "python3-gobject-base-3.40.1-5.el9.aarch64",
       "python3-gpg-1.15.1-5.el9.aarch64",
       "python3-hawkey-0.65.0-2.el9.aarch64",
@@ -7492,6 +7520,7 @@
       "python3-linux-procfs-0.7.0-1.el9.noarch",
       "python3-markupsafe-1.1.1-12.el9.aarch64",
       "python3-netifaces-0.10.6-15.el9.aarch64",
+      "python3-nftables-0.9.8-10.el9.aarch64",
       "python3-oauthlib-3.1.1-2.el9.noarch",
       "python3-perf-5.14.0-55.el9.aarch64",
       "python3-pexpect-4.8.0-7.el9.noarch",
@@ -7600,7 +7629,7 @@
         "size": 10002349568,
         "start": 735051776,
         "type": "E6D6D379-F507-44C2-A23C-238F2A3DF928",
-        "uuid": "52hoFW-Kgtl-qwZF-4QSJ-Qy4b-lKS5-t6COMC"
+        "uuid": "z9F2nL-0dU4-AaZ7-XMnR-IAe1-Gsmx-ulJcTT"
       },
       {
         "bootable": false,
@@ -7699,6 +7728,7 @@
       "man-db-restart-cache-update.service",
       "nfs-blkmap.service",
       "nfs-server.service",
+      "nftables.service",
       "nm-priv-helper.service",
       "oddjobd.service",
       "poweroff.target",
@@ -7736,11 +7766,13 @@
       "crond.service",
       "ctrl-alt-del.target",
       "dbus-broker.service",
+      "dbus-org.fedoraproject.FirewallD1.service",
       "dbus-org.freedesktop.nm-dispatcher.service",
       "dbus.service",
       "dbus.socket",
       "dm-event.socket",
       "dnf-makecache.timer",
+      "firewalld.service",
       "getty@.service",
       "irqbalance.service",
       "kdump.service",
