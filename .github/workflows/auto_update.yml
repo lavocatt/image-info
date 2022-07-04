@@ -1,0 +1,43 @@
+name: Update DB
+
+on: workflow_dispatch
+
+jobs:
+  update_db:
+    name: "Update DB"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone composer
+        uses: actions/checkout@main
+        with:
+          repository: osbuild/osbuild-composer
+          path: osbuild-composer
+
+      - name: Checkout manifest-db
+        uses: actions/checkout@main
+        with:
+          path: manifest-db
+
+      - name: Update DB
+        run: |
+          cd manifest-db
+          ./tools/import-image-tests --verbose ../osbuild-composer/test/data/manifests/ manifest-db
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: Update report
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: false
+          branch: db-update
+          delete-branch: true
+          title: 'db: update manifests from latest osbuild-composer'
+          body: |
+            Automatic update from GH action
+            Only changes the manifests
+          labels: |
+            automated pr
+          assignees: lavocatt
+          reviewers: lavocatt
