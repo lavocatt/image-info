@@ -245,7 +245,7 @@ class TestCase:
 
         return checkpoints
 
-    def build(self) -> bool:
+    def build(self, copy_path=None) -> bool:
         """
         Build the manifest in the test case and compile the image-info out of it.
         Upon error, store the reason in test.error and return False.
@@ -269,6 +269,12 @@ class TestCase:
             if not os.path.exists(image_path):
                 self.error = f"image {image_path} not produced"
                 return False
+
+            if copy_path:
+                extension = os.path.splitext(image_path)[-1]
+                copy_path = f"{copy_path}{extension}"
+                shutil.move(image_path, copy_path)
+                image_path = copy_path
 
             # compile the image-info
             self.built_image_info = self.imi.run(image_path)
@@ -498,6 +504,11 @@ def main():
         default="manifest-db",
         help="path to the database folder"
     )
+    parser.add_argument(
+        "--builds-output",
+        metavar="DIRECTORY",
+        type=os.path.abspath,
+        help="Move the built image there, and don't clean up")
 
     args = parser.parse_args()
 
@@ -546,7 +557,11 @@ def main():
                 print(f"{YELLOW}Warning (ignoring){RESET}: No image info to compare to")
                 continue
 
-        if test.build():
+        copy_path = None
+        if args.builds_output:
+            copy_path = os.path.join(args.builds_output, test.id)
+
+        if test.build(copy_path):
             # Every generated image-info needs to be written to disk regardless
             # of the program running in generated mode or not. So that by
             # running the program on a CI, one can download an image-info that
