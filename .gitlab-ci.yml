@@ -107,10 +107,14 @@ Image-info-build:
           - aws/rhel-8.6-ga-aarch64
           - aws/rhel-8.7-nightly-x86_64
           - aws/rhel-8.7-nightly-aarch64
+          - aws/rhel-8.8-nightly-x86_64
+          - aws/rhel-8.8-nightly-aarch64
           - aws/rhel-9.0-ga-x86_64
           - aws/rhel-9.0-ga-aarch64
           - aws/rhel-9.1-nightly-x86_64
           - aws/rhel-9.1-nightly-aarch64
+          - aws/rhel-9.2-nightly-x86_64
+          - aws/rhel-9.2-nightly-aarch64
         INTERNAL_NETWORK: "true"
 
 push-image-info:
