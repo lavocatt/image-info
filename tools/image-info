@@ -2586,6 +2586,9 @@ def append_partitions(report, image, loctl):
                 filesystems[part["uuid"].upper()] = {
                     "device": dev
                 }
+            else:
+                print("Undefined issue", file=sys.stderr)
+
 
         # find partition with fstab and read it
         fstab = []
@@ -2602,6 +2605,9 @@ def append_partitions(report, image, loctl):
         root_tree = ""
         for n, fstab_entry in enumerate(fstab):
             part_uuid = fstab_entry[0].split("=")[1].upper()
+            if part_uuid not in filesystems:
+                raise RuntimeError(f"Missing partition {part_uuid}: \n "
+                                   f"FSTAB:\n {fstab}")
             part_device = filesystems[part_uuid]["device"]
             part_mountpoint = fstab_entry[1]
             part_fstype = fstab_entry[2]
@@ -2618,7 +2624,9 @@ def append_partitions(report, image, loctl):
             cm.enter_context(mount_at(part_device, f"{root_tree}{part_mountpoint}", options=part_options, extra=["-t", part_fstype]))
 
         if not root_tree:
-            raise RuntimeError("The root filesystem tree is not mounted")
+            print(f"FSTAB\n {fstab}", file=sys.stderr)
+            raise RuntimeError("The root filesystem tree is not mounted \n "
+                               f"FSTAB:\n {fstab}")
 
         append_filesystem(report, root_tree)
 
