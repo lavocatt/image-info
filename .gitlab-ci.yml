@@ -82,7 +82,7 @@ Image-info-build:
     - schutzbot/deploy.sh
     - schutzbot/selinux-context.sh
     - tools/import-image-tests manifests manifest-db --manifest-only --db-ignore=db-ignore --filter-with-ci-distros=.gitlab-ci.yml --verbose
-    - sudo test/cases/manifest_tests
+    - schutzbot/manifest_tests.sh
   rules:
     - if: '$CI_PIPELINE_SOURCE == "trigger"'
   artifacts:
