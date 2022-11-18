@@ -58,6 +58,26 @@ Regression:
       - RUNNER:
           - aws/fedora-35-x86_64
 
+Test-machine:
+  stage: gen
+  extends: .terraform
+  script:
+    - schutzbot/deploy.sh
+    - sleep "3600"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE != "trigger"'
+  artifacts:
+    when: always
+    paths:
+      - generated-image-infos/
+  dependencies:
+    - Manifest-gen
+  parallel:
+    matrix:
+      - RUNNER:
+          - aws/rhel-9.2-nightly-x86_64
+        INTERNAL_NETWORK: "true"
+
 Manifest-gen:
   stage: gen
   extends: .terraform
