@@ -236,6 +236,15 @@ def read_image_format(device) -> Dict[str, str]:
         result["compat"] = qemu["format-specific"]["data"]["compat"]
     return result
 
+def stat(device):
+    res = subprocess.run(["stat", device],
+                         check=False, encoding="utf-8",
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    if res.returncode == 0:
+        print(f"stat {device}:\n {res.stdout}", file=sys.stderr);
+    else:
+        print(f"stat {device} failed {res.returncode}:\n {res.stderr}", file=sys.stderr);
 
 def read_partition(device, partition):
     """
@@ -249,11 +258,15 @@ def read_partition(device, partition):
                           device],
                          check=False, encoding="utf-8",
                          stdout=subprocess.PIPE,
-                         stderr=sys.stderr)
+                         stderr=subprocess.PIPE)
+    print(f"BLKID -c /dev/null --output export {device}:\n"
+          f"blkid stderr: {res.stderr}\n"
+          f"blkid stdout: {res.stdout}\n"
+          f"blkid rtcode: {res.returncode}\n", file=sys.stderr)
+    stat(device)
     if res.returncode == 0:
         blkid = parse_environment_vars(res.stdout)
     else:
-        print(f"BLKID -c /dev/null --output export {device} failed", file=sys.stderr)
         blkid = {}
 
     partition["label"] = blkid.get("LABEL") # doesn't exist for mbr
