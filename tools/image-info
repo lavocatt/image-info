@@ -66,7 +66,24 @@ def loop_open(ctl, image, *, offset=None, size=None):
     with open(image, "rb") as f:
         fd = f.fileno()
         with loop_create_device(ctl, fd, offset=offset, sizelimit=size) as lo:
-            yield os.path.join("/dev", lo.devname)
+            dev_path = os.path.join("/dev", lo.devname)
+
+            # Depending on system setup and devtmpfs-usage, we cannot rely on
+            # the device-node to show up immediately. Our options are either to
+            # listen to udev-events (which we might not have access to due to
+            # network namespaces), to create our own device-nodes (which we
+            # might fail due to 'nodev' mounts), or use our private mount for
+            # our own custom device-nodes (which might fail due to lacking
+            # privileges). Hence, for now we simply loop for 8s and wait until
+            # the device shows up. This is unfortunate, but seems like the
+            # best option.
+            start_time = time.monotonic()
+            while not os.access(dev_path, os.R_OK):
+                if time.monotonic() - start_time > 8:
+                    raise RuntimeError("device-node of new loop-device did not show up")
+                time.sleep(0.1)
+
+            yield dev_path
 
 
 @contextlib.contextmanager
@@ -231,10 +248,12 @@ def read_partition(device, partition):
     res = subprocess.run(["blkid", "-c", "/dev/null", "--output", "export",
                           device],
                          check=False, encoding="utf-8",
-                         stdout=subprocess.PIPE)
+                         stdout=subprocess.PIPE,
+                         stderr=sys.stderr)
     if res.returncode == 0:
         blkid = parse_environment_vars(res.stdout)
     else:
+        print(f"BLKID -c /dev/null --output export {device} failed", file=sys.stderr)
         blkid = {}
 
     partition["label"] = blkid.get("LABEL") # doesn't exist for mbr
@@ -2564,7 +2583,13 @@ def append_partitions(report, image, loctl):
         for part in partitions:
             start, size = part["start"], part["size"]
             dev = cm.enter_context(loop_open(loctl, image, offset=start, size=size))
-            read_partition(dev, part)
+            has_read = False
+            sart_time = time.monotonic()
+            while not has_read and time.monotonic() - sart_time < 10:
+                read_partition(dev, part)
+                has_read = "uuid" in part and "fstype" in part
+            if not has_read:
+                raise RuntimeError("could not read partition");
             if partition_is_lvm(part):
                 lvm = cm.enter_context(discover_lvm(dev))
                 for vol in lvm["lvm.volumes"].values():
