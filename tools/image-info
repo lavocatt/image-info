@@ -2454,7 +2454,7 @@ def volume_group_for_device(device: str) -> str:
 
         if res.returncode == 5:
             if count == 10:
-                raise RuntimeError("Could not find parent device")
+                raise RuntimeError("Could not find parent device {res.stderr}")
             time.sleep(1*count)
             count += 1
             continue
@@ -2495,7 +2495,7 @@ def discover_lvm(devpath:str, parent, devmgr:devices.DeviceManager):
                          encoding="UTF-8")
 
     if res.returncode != 0:
-        raise RuntimeError(res.stderr.strip())
+        raise RuntimeError(f"lvdisplay failed {res.returncode}: {res.stderr.strip()}")
 
     data = res.stdout.strip()
     parsed = list(map(lambda l: l.split(";"), data.split("\n")))
@@ -2646,12 +2646,11 @@ def analyse_image(image) -> Dict[str, Any]:
     report: Dict[str, Any] = {"image-format": imgfmt}
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        with convert_image(image, imgfmt) as target:
-            size = os.stat(target).st_size
-            with contextlib.ExitStack() as cm:
-                with host.ServiceManager(monitor=monitor.NullMonitor(1)) as mgr:
-                    with make_dev_tmpfs(tmpdir) as devpath:
-                        devpath = "/dev"
+        with make_dev_tmpfs(tmpdir) as devpath:
+            with convert_image(image, imgfmt) as target:
+                size = os.stat(target).st_size
+                with contextlib.ExitStack() as cm:
+                    with host.ServiceManager(monitor=monitor.NullMonitor(1)) as mgr:
                         devmgr = devices.DeviceManager(mgr,
                                                        devpath,
                                                        os.path.dirname(target))
@@ -2796,8 +2795,11 @@ def make_dev_tmpfs(tmpdir):
     dev_path = os.path.join(tmpdir, "dev")
     os.makedirs(dev_path)
     subprocess.run(["mount", "-t", "tmpfs", "-o", "nosuid", "none", dev_path], check=True)
-    yield dev_path
-    subprocess.run(["umount", "--lazy", dev_path], check=True)
+    try:
+        yield dev_path
+    finally:
+        subprocess.run(["umount", "--lazy", dev_path], check=True)
+        os.rmdir(dev_path)
 
 def main():
     parser = argparse.ArgumentParser(description="Inspect an image")
